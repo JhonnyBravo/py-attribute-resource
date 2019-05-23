@@ -6,10 +6,11 @@ import os
 
 from pip._vendor.distlib._backport.tarfile import pwd
 
+from py_attribute_resource import AttributeResource
 from py_status_resource import StatusResource
 
 
-class ModeResource(StatusResource):
+class ModeResource(StatusResource, AttributeResource):
     """
     ファイルまたはディレクトリのパーミッション設定を管理する。
     """
@@ -29,12 +30,16 @@ class ModeResource(StatusResource):
         """
         return self.__path
 
-    def get_mode(self):
+    def get_attribute(self):
         """
         :return: ファイルまたはディレクトリから現在のパーミッション設定を取得する。
         :rtype: str
         """
         mode = 0000
+
+        if self.is_windows():
+            self.print_message(1, "Windows ではパーミッションの取得はサポートしていません。")
+            return mode
 
         if not os.path.exists(self.path):
             self.print_message(1, self.path + " が見つかりません。")
@@ -46,12 +51,16 @@ class ModeResource(StatusResource):
         self.code = 2
         return mode
 
-    def set_mode(self, mode):
+    def set_attribute(self, mode):
         """
         ファイルまたはディレクトリのパーミッション設定を変更する。
 
         :param int mode: 新しいパーミッション値として設定する値を 4 桁の 8 進数で指定する。
         """
+        if self.is_windows():
+            self.print_message(1, "Windows ではパーミッションの変更はサポートしていません。")
+            return
+
         if not os.path.exists(self.path):
             self.print_message(1, self.path + " が見つかりません。")
 
