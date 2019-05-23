@@ -9,7 +9,7 @@ except IOError:
 
 setup(
     name="py-attribute-resource",
-    version="1.0.0",
+    version="1.0.1",
     description="Python module for file attribute management",
     author="Jhonny Bravo",
     author_email="sanfranceshika5@gmail.com",
