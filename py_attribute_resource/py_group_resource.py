@@ -6,10 +6,11 @@ import os
 
 from pip._vendor.distlib._backport.tarfile import grp
 
+from py_attribute_resource import AttributeResource
 from py_status_resource import StatusResource
 
 
-class GroupResource(StatusResource):
+class GroupResource(StatusResource, AttributeResource):
     """
     ファイルまたはディレクトリのグループ所有者を管理する。
     """
@@ -29,12 +30,16 @@ class GroupResource(StatusResource):
         """
         return self.__path
 
-    def get_group(self):
+    def get_attribute(self):
         """
         :return: ファイルまたはディレクトリから現在のグループ所有者を取得する。
         :rtype: str
         """
         group_name = ""
+
+        if self.is_windows():
+            self.print_message(1, "Windows ではグループ所有者の取得はサポートしていません。")
+            return group_name
 
         if not os.path.exists(self.path):
             self.print_message(1, self.path + " が見つかりません。")
@@ -46,12 +51,16 @@ class GroupResource(StatusResource):
         self.code = 2
         return group_name
 
-    def set_group(self, group_name):
+    def set_attribute(self, group_name):
         """
         ファイルまたはディレクトリへ新しいグループ所有者を設定する。
 
         :param str group_name: 新しいグループ所有者として設定するグループ名を指定する。
         """
+        if self.is_windows():
+            self.print_message(1, "Windows ではグループ所有者の変更はサポートしていません。")
+            return
+
         if not os.path.exists(self.path):
             self.print_message(1, self.path + " が見つかりません。")
 
